@@ -1,0 +1,84 @@
+insert data:
+{{name}}
+
+expression: name[.subname]*[| filter]*
+
+boolOP:
+    expression
+    boolOP [== | >= | <= | and | or ] boolOP
+    not boolOP
+
+<!-- use filter:
+{{story.subject | lowerCase}} => lowerCase(story.subject) -->
+
+if statement:
+{% if ... %}
+    ...
+{% elif ... %} // 可选
+    ...
+{% else %} // 可选
+    ...
+{% endif %}
+
+for statement:
+{% for var in list%}
+    ...
+{%endfor%}
+
+{{name    | lowerCase   }}
+
+&filter  {{name | default: "Tom"}}
+
+
+<p>Topics for {{name   |  lowerCase}}: {% for t in topics %}lis:{{t}}, {% endfor %}</p>
+
+literal     <p>Topics for 
+expression  name
+literal     :
+for         for
+expression  t
+in          in
+expression  topics
+literal     lis:
+expression  t
+endfor      endfor
+literal     </p>
+
+template    str expression str for
+for         t topics body
+body        template
+
+def render_function(context):
+    result = []
+    result.append("<p>TOpic....")
+    result.append(str(c_name))
+    result.append
+
+
+    {% macro showProduct(product) %}
+    <li>{{ product.name }}: {{ product.price }}</li>
+    {% endmacro %}
+
+{% extends file_name %}
+
+{% block block_name %} {% endblock %}
+
+
+
+
+# template = '''
+# {% macro showProduct(a) %}
+# <li>{{ a }}</li>
+# {% endmacro %}
+# <p>Welcome, {{userName}}!</p>
+# <p>Products:</p>
+# <ul>
+# {% for productKey in productList.keys %}
+#     {% call showProduct(productKey) %}
+# {% endfor %}
+# </ul>
+# '''
+
+
+# productList = {"name":"book","price":12,"palce":"home","tag":"useless"}
+# context = {"userName":"angryPotato","productList":productList}

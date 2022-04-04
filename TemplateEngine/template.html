@@ -1,0 +1,21 @@
+{@extends base.html@}
+{% block tes %}
+{% macro showProduct(product) %}
+<li>{{ product.name }}: {{ product.price | toM }}</li>
+{% endmacro %}
+<p>Welcome, {{userName}}!</p>
+<p>Products:</p>
+{% if age gte 20 %}
+<p>Age={{age}}</p>
+{% elif age gte 10 %}
+<p>ok,{{age}}</p>
+{% else %}
+<P>Age less 20</p>
+{% endif %}
+<ul>
+{% for product in productList %}
+    {% call showProduct(product) %}
+{% endfor %}
+{% call showProduct(productList.0)%}
+</ul>
+{% endblock %}
