@@ -1,4 +1,4 @@
-from Parser import *
+from .Parser import *
 
 class CodeBuilder:
     def __init__(self,level = 0) -> None:

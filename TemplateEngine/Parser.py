@@ -1,4 +1,4 @@
-from Lexer import *
+from .Lexer import *
 from typing import List
 
 class AST:

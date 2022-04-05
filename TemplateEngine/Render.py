@@ -1,6 +1,7 @@
-from Lexer import *
-from Parser import *
-from Compiler import *
+from .Lexer import *
+from .Parser import *
+from .Compiler import *
+import os
 
 class Library:
     def __init__(self) -> None:
@@ -15,8 +16,12 @@ class Library:
         self.tag[name] = func
 
 class Render:
-    def __init__(self,fileName) -> None:
+    def __init__(self,fileName,templatesRoot='') -> None:
+        current_path = os.path.realpath(__file__)
+        # print("test::",os.path.dirname(os.path.dirname(current_path)) + "\\templates\\")
+        self.templatesRoot = templatesRoot if templatesRoot != '' else os.path.dirname(os.path.dirname(current_path)) + "\\templates\\"
         self.template = ''
+        fileName = self.templatesRoot + fileName
         with open(fileName,'r') as f:
             self.template = f.read()
         self.extendsTemplate = None
@@ -41,7 +46,7 @@ class Render:
             return lambda x : register(target, x)
 
     def extends(self,line):
-        fileName = line[2:len(line) - 2].split()[1]
+        fileName = self.templatesRoot + line[2:len(line) - 2].split()[1]
         with open(fileName,'r') as f:
             self.extendsTemplate = f.read()
 

@@ -21,7 +21,7 @@ class httpServer:
             self.soc.listen(5)
             conn,addr = self.soc.accept()
             request = str(conn.recv(1024), encoding = "utf-8")
-            print(request)
+            # print(request)
             request = self.parseRequest(request,addr)
             if(not request):
                 print("request error")
@@ -31,10 +31,10 @@ class httpServer:
             url_type = temp[-1] if len(temp) > 1 else 'py'
             if(url_type == 'py'):
                 try:
-                    py_name = request['url'][1:-3] # FIXME:
-                    py_module = __import__(py_name)
-                    env = {}
-                    response_body = py_module.application(env,self.start_response)
+                    # py_name = request['url'][1:-3] # FIXME:
+                    # py_module = __import__(py_name)
+                    env = {'request':request}
+                    response_body = application(env,self.start_response)
                     response = bytes(self.response_status + os.linesep + self.response_header + os.linesep + response_body, encoding="utf-8")
                     conn.sendall(response)
                     conn.close()
