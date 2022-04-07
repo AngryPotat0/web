@@ -1,14 +1,14 @@
 import socket
 import os
-from web import *
 
 class httpServer:
-    def __init__(self,ip: str, port: int):
+    def __init__(self,ip: str, port: int,application=None):
         self.file_type = {
             'jpg': 'image/jpeg',
             'png': 'image/png',
             'html': 'text/html'
         }
+        self.application = application
         self.response_status = ''
         self.response_header = ''
         self.statics = self.loadStatic('static')
@@ -34,7 +34,7 @@ class httpServer:
                     # py_name = request['url'][1:-3] # FIXME:
                     # py_module = __import__(py_name)
                     env = {'request':request}
-                    response_body = application(env,self.start_response)
+                    response_body = self.application(env,self.start_response)
                     response = bytes(self.response_status + os.linesep + self.response_header + os.linesep + response_body, encoding="utf-8")
                     conn.sendall(response)
                     conn.close()
