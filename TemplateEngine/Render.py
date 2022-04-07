@@ -1,3 +1,4 @@
+from matplotlib.style import library
 from .Lexer import *
 from .Parser import *
 from .Compiler import *
@@ -18,7 +19,6 @@ class Library:
 class Render:
     def __init__(self,fileName,templatesRoot='') -> None:
         current_path = os.path.realpath(__file__)
-        # print("test::",os.path.dirname(os.path.dirname(current_path)) + "\\templates\\")
         self.templatesRoot = templatesRoot if templatesRoot != '' else os.path.dirname(os.path.dirname(current_path)) + "\\templates\\"
         self.template = ''
         fileName = self.templatesRoot + fileName
@@ -27,23 +27,6 @@ class Render:
         self.extendsTemplate = None
         self.render_functon = None
         self.base_function = None
-        self.library = Library()
-
-    def registerFilter(self,target):
-        def register(k,v):
-            self.library.registerFilter(k,v)
-        if(callable(target)):
-            return register(target.__name__, target)
-        else:
-            return lambda x : register(target, x)
-
-    def registerTag(self,target):
-        def register(k,v):
-            self.library.registerTag(k,v)
-        if(callable(target)):
-            return register(target.__name__, target)
-        else:
-            return lambda x : register(target, x)
 
     def extends(self,line):
         fileName = self.templatesRoot + line[2:len(line) - 2].split()[1]
@@ -77,7 +60,8 @@ class Render:
             # print("#################")
             # print(self.base_function)
 
-    def render(self,context):
+    def render(self,context,commonLibrary=None):
+        # library = self.library if commonLibrary == None else commonLibrary
         def do_dots(value,*args):
             for dot in args:
                 try:
@@ -98,6 +82,6 @@ class Render:
             for functionName in functions.keys():
                 if(functionName == 'render'): continue
                 if(functionName in base_functions): base_functions[functionName] = functions[functionName]
-            return base_functions["render"](context,self.library,do_dots)
+            return base_functions["render"](context,commonLibrary,do_dots)
         else:
-            return functions["render"](context,self.library,do_dots)
+            return functions["render"](context,commonLibrary,do_dots)
