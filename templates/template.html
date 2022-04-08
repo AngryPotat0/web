@@ -1,7 +1,7 @@
 {@extends base.html@}
 {% block tes %}
 {% macro showProduct(product) %}
-<li>{{ product.name }}: {{ product.price | toM }}</li>
+<li>{{ product.name }}: {{ product.price | cashFormat }}</li>
 {% endmacro %}
 <p>Welcome, {{userName}}!</p>
 <p>Products:</p>
