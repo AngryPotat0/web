@@ -1,6 +1,7 @@
 import time
 import json
 from TemplateEngine.Render import *
+from server import *
 
 class Html:
     def __init__(self,text) -> None:
@@ -23,6 +24,11 @@ class Light:
         self.commonLibrary = Library()
         self.status = 'HTTP/1.1 200 OK'
         self.contentType = 'text/html'
+    
+    def run(self):
+        server =httpServer('localhost',8080,self.application)
+        server.run()
+
 
     def application(self,env,start_response):
         # print(env)

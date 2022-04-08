@@ -6,6 +6,9 @@ from server import httpServer
 
 light = Light()
 
+def application():
+    light.run()
+
 @light.registerTag
 def currentTime(*args):
     now_time = str(datetime.datetime.now())
@@ -25,5 +28,4 @@ def fun():
 def js():
     return Json({ 'a' : 1, 'b' : 2, 'c' : 3, 'd' : 4, 'e' : 5 })
 
-server =httpServer('localhost',8080,light.application)
-server.run()
+application()
