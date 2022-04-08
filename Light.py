@@ -30,8 +30,8 @@ class Light:
         method = request['method']
         url = request['url']
         body = request['body']
-        print(method,url,body)
-        response_body = self.response(url)
+        print("method: " + method," url: " + url,"body: " + body)
+        response_body = self.response(method,url,body)
         response_headers = [('Server', 'bfe/1.0.8.18'), ('Date', '%s' % time.ctime()), ('Content-Type', self.contentType)]
         start_response(self.status, response_headers)
 
@@ -75,7 +75,7 @@ class Light:
         else:
             return lambda x : register(target, x)
 
-    def response(self,path,*args):
+    def response(self,method,path,body):
         # return self.routeList[path]() #TODO: *args 404 and others
         if(path in self.routeList):
             responseBody = self.routeList[path]()
@@ -85,5 +85,8 @@ class Light:
                 self.contentType = 'text/json'
             return str(responseBody)
         else:
-            self.status = 'HTTP/1.1 404 NotFound'
-            return '<html><body><h1>404<h1></body></html>'
+            return self.notFound()
+    
+    def notFound(self):
+        self.status = 'HTTP/1.1 404 NotFound'
+        return '<html><body><h1>404<h1></body></html>'
