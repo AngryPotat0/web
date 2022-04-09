@@ -1,5 +1,6 @@
 import time
 import json
+import inspect
 from TemplateEngine.Render import *
 from server import *
 
@@ -84,11 +85,19 @@ class Light:
     def response(self,method,path,body):
         # return self.routeList[path]() #TODO: *args 404 and others
         if(path in self.routeList):
-            responseBody = self.routeList[path]()
+            func = self.routeList[path]
+            responseBody = ''
+            if(func.__code__.co_argcount == 0):
+                responseBody = func()
+            else:
+                responseBody = func(json.loads(body))
+            
             if(isinstance(responseBody,Html)):
                 self.contentType = 'text/html'
             elif(isinstance(responseBody,Json)):
                 self.contentType = 'text/json'
+            else:
+                self.contentType = 'text/plain'
             return str(responseBody)
         else:
             return self.notFound()

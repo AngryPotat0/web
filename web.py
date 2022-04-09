@@ -1,13 +1,9 @@
-import time
 import datetime
 from TemplateEngine.Render import *
 from Light import *
-from server import httpServer
 
 light = Light()
 
-def application():
-    light.run()
 
 @light.registerTag
 def currentTime(*args):
@@ -28,4 +24,8 @@ def fun():
 def js():
     return Json({ 'a' : 1, 'b' : 2, 'c' : 3, 'd' : 4, 'e' : 5 })
 
-application()
+@light.request('/getJson')
+def getJson(json_obj):
+    return json.dumps(json_obj)
+
+light.run()
