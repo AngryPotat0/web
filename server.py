@@ -1,7 +1,8 @@
 from cmath import e
 import socket
 import os
-from tkinter.messagebox import NO
+from os.path import dirname, abspath
+script_path = abspath(dirname(__file__))
 
 class httpServer:
     def __init__(self,ip: str, port: int,application=None):
@@ -14,15 +15,27 @@ class httpServer:
         self.response_status = ''
         self.response_header = ''
         self.web_root_path = ''
-        self.setRootPath()
+        self.setting()
         self.soc = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.soc.bind((ip,port))
 
-    def setRootPath(self,path = None):
-        if(path == None):
-            self.web_root_path = os.path.join(os.getcwd(), 'static')
-        else:
-            self.web_root_path = path
+    def setRootPath(self,path='static'):
+        # self.web_root_path = os.path.join(script_path, path)
+        self.web_root_path = script_path + "/" + path
+
+    def setting(self):#TODO: 读取配置文件
+        text = ""
+        root_path = 'static'
+        try:
+            f = open("setting.ini",'r')
+            text = f.read().split('\r\n')
+        except Exception:
+            print("Error in settings")
+        for line in text:
+            k,v = line.split('=')
+            if(k == 'root'):
+                root_path = v
+        self.setRootPath(root_path)
 
     def run(self):
         print("Http Server start running")
