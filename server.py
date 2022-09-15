@@ -1,5 +1,7 @@
+from cmath import e
 import socket
 import os
+from tkinter.messagebox import NO
 
 class httpServer:
     def __init__(self,ip: str, port: int,application=None):
@@ -11,9 +13,16 @@ class httpServer:
         self.application = application
         self.response_status = ''
         self.response_header = ''
-        self.statics = self.loadStatic('static')
+        self.web_root_path = ''
+        self.setRootPath()
         self.soc = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.soc.bind((ip,port))
+
+    def setRootPath(self,path = None):
+        if(path == None):
+            self.web_root_path = os.path.join(os.getcwd(), 'static')
+        else:
+            self.web_root_path = path
 
     def run(self):
         print("Http Server start running")
@@ -54,8 +63,8 @@ class httpServer:
                     response = bytes('HTTP/1.1 200 OK' + os.linesep + 'Content-Type:%s'% file_type + os.linesep + os.linesep, encoding="utf-8")
                     file = request['url'] if request['url'] != '/' else '/index.html'
 
-                    if(file in self.statics):
-                        temp = self.statics[file]
+                    temp = self.loadFile(file)
+                    if(temp != None):
                         if(isinstance(temp,str)):
                             response += bytes(temp,encoding="utf-8")
                         else:
@@ -71,6 +80,7 @@ class httpServer:
                     conn.close()
 
     def parseRequest(self,request,addr):
+        # print(request)
         request_split = request.split('\r\n')
         method, url, version = request_split[0].split(' ')
 
@@ -97,46 +107,22 @@ class httpServer:
         }
         return ans
 
-    def get_file(self, files_dir='.'):
-        files_dir = os.path.join(os.getcwd(), files_dir)
-        fin = []
-
-        def helper(files_dir='.', path=''):
-            if (files_dir[-1:] != '/'):
-                files_dir += '/'
-            files = os.listdir(files_dir)
-            for file in files:
-                fpath = os.path.join(files_dir, file)
-                if (os.path.isdir(fpath)):
-                    helper(fpath, path + '/' +file)
-                else:
-                    if (path):
-                        fin.append('%s/%s' % (path[1:], file))
-                    else:
-                        fin.append(file)
-
-        helper(files_dir)
-        return fin
-
-    def loadStatic(self, static_path='static'):
-        files = self.get_file(static_path)
-        # for file in files:
-        #     print(file)
-        static_path = os.path.join(os.getcwd(), static_path)
-        statics = dict()
+    def loadFile(self,file_path):
+        file_path = self.web_root_path + "/" + file_path
         img_file = ('jpg', 'png', 'ico')
         audio_file = ('wav')
-        for file in files:
-            suf = file.split('.')[-1]
-            file_path = os.path.join(static_path, file)
-            print(file_path)
-            if (suf in img_file or suf in audio_file):
+        file_type = file_path.split('.')[-1]
+        file = None
+        try:
+            if(file_type in img_file or file_type in audio_file):
                 f = open(file_path, 'rb')
             else:
-                f = open(file_path, 'r')
-            statics['/' + file] = f.read()
+                f = open(file_path,'r')
+            file = f.read()
             f.close()
-        return statics
+        except Exception:
+            pass
+        return file
 
     def start_response(self, status, response_headers):
         self.response_status = status
