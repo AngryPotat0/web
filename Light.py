@@ -18,6 +18,15 @@ class Json:
     def __str__(self) -> str:
         return json.dumps(self.obj)
 
+def isJson(str):
+    res = None
+    try:
+        res = json.loads(str)
+        print(res)
+    except Exception:
+        print("EEEEEEEEEEEEEEEE")
+    return res
+
 class Light:
     def __init__(self) -> None:
         self.routeList = dict()
@@ -36,9 +45,10 @@ class Light:
         request = env['request']
         method = request['method']
         url = request['url']
+        head = request['head']
         body = request['body']
         print("method: " + method," url: " + url,"body: " + body)
-        response_body = self.response(method,url,body)
+        response_body = self.response(method,url,head,body)
         response_headers = [('Server', 'bfe/1.0.8.18'), ('Date', '%s' % time.ctime()), ('Content-Type', self.contentType)]
         start_response(self.status, response_headers)
 
@@ -82,7 +92,7 @@ class Light:
         else:
             return lambda x : register(target, x)
 
-    def response(self,method,path,body):
+    def response(self,method,path,head,body):
         # return self.routeList[path]() #TODO: *args 404 and others
         if(path in self.routeList):
             func = self.routeList[path]
@@ -90,7 +100,11 @@ class Light:
             if(func.__code__.co_argcount == 0):
                 responseBody = func()
             else:
-                responseBody = func(json.loads(body))
+                arg = isJson(body)#FIXME:
+                if(arg != None):
+                    responseBody = func(arg)
+                else:
+                    print("ERROR: 暂不支持的body") #TODO: eror page
             
             if(isinstance(responseBody,Html)):
                 self.contentType = 'text/html'

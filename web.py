@@ -31,6 +31,7 @@ def js():
 
 @light.request('/getJson')
 def getJson(json_obj):
+    print(json.dumps(json_obj))
     return json.dumps(json_obj)
 
 light.run()
