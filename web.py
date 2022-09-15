@@ -1,4 +1,5 @@
 import datetime
+from tkinter.messagebox import NO
 from TemplateEngine.Render import *
 from Light import *
 
@@ -19,6 +20,10 @@ def fun():
     productList = [{"name":"book","price":12},{"name":"cup","price":22},{"name":"keyboard","price":530}]
     context = {"userName":"angryPotato","age":15,"productList":productList}
     return light.render('template.html',context)
+
+@light.request('/show')
+def fun():
+    return light.render('show.html',None)
 
 @light.request('/jsonTest')
 def js():
