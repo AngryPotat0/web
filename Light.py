@@ -27,7 +27,7 @@ class Light:
         self.contentType = 'text/html'
     
     def run(self):
-        server =httpServer('localhost',8080,self.application)
+        server =httpServer(self.application)
         server.run()
 
 

@@ -1,11 +1,12 @@
 from cmath import e
+from re import S
 import socket
 import os
 from os.path import dirname, abspath
 script_path = abspath(dirname(__file__))
 
 class httpServer:
-    def __init__(self,ip: str, port: int,application=None):
+    def __init__(self,application=None):
         self.file_type = {
             'jpg': 'image/jpeg',
             'png': 'image/png',
@@ -15,9 +16,11 @@ class httpServer:
         self.response_status = ''
         self.response_header = ''
         self.web_root_path = ''
+        self.ip = ''
+        self.port = 0
         self.setting()
         self.soc = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.soc.bind((ip,port))
+        self.soc.bind((self.ip,self.port))
 
     def setRootPath(self,path='static'):
         # self.web_root_path = os.path.join(script_path, path)
@@ -25,17 +28,20 @@ class httpServer:
 
     def setting(self):#TODO: 读取配置文件
         text = ""
-        root_path = 'static'
+        self.setRootPath('static')
         try:
             f = open("setting.ini",'r')
-            text = f.read().split('\r\n')
+            text = f.read().split('\n')
         except Exception:
             print("Error in settings")
         for line in text:
             k,v = line.split('=')
             if(k == 'root'):
-                root_path = v
-        self.setRootPath(root_path)
+                self.setRootPath(v)
+            elif(k == 'ip'):
+                self.ip = v
+            elif(k == 'port'):
+                self.port = int(v)
 
     def run(self):
         print("Http Server start running")
