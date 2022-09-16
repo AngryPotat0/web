@@ -1,0 +1,12 @@
+<html>
+    <body>
+        <table border="1">
+            {% for product in productList %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

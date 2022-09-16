@@ -1,10 +1,14 @@
 import datetime
+from itertools import product
+from multiprocessing import context
 from tkinter.messagebox import NO
 from TemplateEngine.Render import *
 from Light import *
+from database import *
 
 light = Light()
-
+db = Database("webDatabase.db")
+conn = db.getDB()
 
 @light.registerTag
 def currentTime(*args):
@@ -33,5 +37,26 @@ def js():
 def getJson(json_obj):
     print(json.dumps(json_obj))
     return json.dumps(json_obj)
+
+@light.request('/insert')
+def insertProduct(json_obj):
+    productList = json_obj['list']
+    print(productList)
+    for name in productList:
+        conn.execute("insert into products(name) values (?)", (name,))
+    conn.commit()
+
+@light.request('/showProducts')
+def showProducts():
+    res = conn.execute('select * from products')
+    res = list(res)
+    productList = list()
+    if(len(res) > 0):
+        i = 1
+        for row in res:
+            productList.append({'id':i,"name":row[1]})
+            i += 1
+    context = {"productList":productList}
+    return light.render('databaseTest.html',context)
 
 light.run()
